@@ -1,0 +1,13 @@
+hash: 367100ae5c0794de7a42fe807abb1ffd6db85d12b33a7f529990ee12da02d0f3
+updated: 2017-05-19T23:14:33.4086377+05:30
+imports:
+- name: github.com/julienschmidt/httprouter
+  version: 8c199fb6259ffc1af525cc3ad52ee60ba8359669
+- name: github.com/kelseyhightower/envconfig
+  version: f611eb38b3875cc3bd991ca91c51d06446afa14c
+- name: github.com/sudarshan-reddy/mqtt
+  version: 224886b076ed3a2b33ed8d2b50f056013c12192e
+  subpackages:
+  - mq
+  - mqttproto
+testImports: []

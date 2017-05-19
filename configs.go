@@ -7,6 +7,7 @@ type Config struct {
 	MQTTURL    string `envconfig:"MQTT_URL" required:"true"`
 	MQTTTopic  string `envconfig:"MQTT_TOPIC" required:"true"`
 	MQTTClient string `envconfig:"MQTT_CLIENT" required:"true"`
+	ListenAddr string `envconfig:"LISTEN_ADDR" required:"true"`
 }
 
 func loadConfigs() (*Config, error) {

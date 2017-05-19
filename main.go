@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sudarshan-reddy/airbender-server/mq"
+	"github.com/sudarshan-reddy/mqtt/mq"
 )
 
 const (
@@ -25,18 +23,16 @@ func failOnError(err error, msg string) {
 func main() {
 	cfg, err := loadConfigs()
 	failOnError(err, "failed to load configs")
-	mqttClient, err := mq.NewClient(cfg.MQTTClient, cfg.MQTTURL, cfg.MQTTTopic)
+	mqttClient, err := mq.NewClient(cfg.MQTTClient, cfg.MQTTURL, cfg.MQTTTopic, false)
 	failOnError(err, "failed to load client")
 	defer mqttClient.Close()
-
 	serv := &server{client: mqttClient}
 	responseCh := make(chan string)
 	defer close(responseCh)
-	serv.startSubscribing(responseCh)
-	go serv.handleResponses(responseCh)
+	go serv.startSubscribing(responseCh)
 	router := httprouter.New()
 	router.GET(apiVersion+"/currentStatus", currentStatus)
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(cfg.ListenAddr, router)
 }
 
 type server struct {
@@ -44,22 +40,18 @@ type server struct {
 }
 
 func (s *server) startSubscribing(response chan string) {
-	s.client.Subscribe(func(client mqtt.Client, message mqtt.Message) {
-		resp := message.Payload()
-		if resp != nil {
-			response <- string(resp)
-		}
-	})
-}
-
-func (s *server) handleResponses(responseCh chan string) {
-	for response := range responseCh {
-		//Write to Database here
-		lastResponse = []byte(response)
-		fmt.Println(response)
+	for writer := range s.client.Subscribe() {
+		writer.WritePayload(s)
 	}
 }
 
+func (s *server) Write(p []byte) (n int, err error) {
+	lastResponse = p
+	return 0, nil
+}
+
 func currentStatus(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(lastResponse)
 }

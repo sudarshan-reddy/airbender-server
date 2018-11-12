@@ -1,0 +1,17 @@
+mergeable:
+  pull_requests:
+    # Minimum of 2 approvals is needed.
+    approvals: 2
+
+    # Regular expression to be tested on the title. Not mergeable when true.  
+    title: 
+      must_include:
+        regex: `^\[test\/wire#[0-9]*\]`
+        message: `Title must begin with the format '[test/wire#<issue no.>'`
+      must_excluse:
+        regex: `wip, fixes`
+        message: `Title cannot have the keywords wip or fixes to be mergeable`
+    description:
+      no_empty:
+        enabled: false
+        message: `Don't be lazy, add a description`

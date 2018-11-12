@@ -6,8 +6,8 @@ mergeable:
     # Regular expression to be tested on the title. Not mergeable when true.  
     title: 
       must_include:
-        regex: `^\[test\/wire#[0-9]*\]`
-        message: `Title must begin with the format '[test/wire#<issue no.>'`
+        regex: `^\[RealImage\/qube-wire#[0-9]*\]`
+        message: `Title must begin with the format '[RealImage/qube-wire#<issue no.>'`
       must_excluse:
         regex: `wip, fixes`
         message: `Title cannot have the keywords wip or fixes to be mergeable`
